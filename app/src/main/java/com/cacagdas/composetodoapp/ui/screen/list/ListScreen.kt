@@ -1,4 +1,4 @@
-package com.cacagdas.composetodoapp.ui.screen
+package com.cacagdas.composetodoapp.ui.screen.list
 
 import android.annotation.SuppressLint
 import androidx.compose.material.icons.Icons
@@ -20,6 +20,9 @@ fun ListScreen(
     navigateToTaskScreen: (Int) -> Unit,
 ) {
     Scaffold(
+        topBar = {
+            ListAppBar()
+        },
         content = {},
         floatingActionButton = {
             ListFab(navigateToTaskScreen)
