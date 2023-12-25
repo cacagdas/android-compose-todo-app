@@ -19,6 +19,10 @@ val MediumPriorityColor = Color(0xFFFFC114)
 val HighPriorityColor = Color(0xFFFF4646)
 val NonePriorityColor = Color(0xFFFFFFFF)
 
+val ColorScheme.fabBackgroundColor: Color
+    @Composable
+    get() = if (isSystemInDarkTheme()) Purple40 else LowPriorityColor
+
 val ColorScheme.topAppBarContentColor: Color
     @Composable
     get() = if (isSystemInDarkTheme()) Color.LightGray else Color.White
