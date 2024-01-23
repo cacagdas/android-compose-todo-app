@@ -11,3 +11,6 @@ val PADDING_4 = 4.dp
 val SIZE_24 = 24.dp
 val SIZE_16 = 16.dp
 val SIZE_8 = 8.dp
+
+val TOP_APP_BAR_SIZE = 56.dp
+val TOP_APP_BAR_ELEVATION = 4.dp
