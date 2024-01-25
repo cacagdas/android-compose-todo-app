@@ -36,6 +36,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import com.cacagdas.composetodoapp.R
 import com.cacagdas.composetodoapp.data.model.Priority
+import com.cacagdas.composetodoapp.ui.SharedViewModel
 import com.cacagdas.composetodoapp.ui.theme.PADDING_12
 import com.cacagdas.composetodoapp.ui.theme.TOP_APP_BAR_ELEVATION
 import com.cacagdas.composetodoapp.ui.theme.TOP_APP_BAR_SIZE
@@ -43,20 +44,40 @@ import com.cacagdas.composetodoapp.ui.theme.Typography
 import com.cacagdas.composetodoapp.ui.theme.topAppBarBackgroundColor
 import com.cacagdas.composetodoapp.ui.theme.topAppBarContentColor
 import com.cacagdas.composetodoapp.uicomponents.PriorityItem
+import com.cacagdas.composetodoapp.util.SearchAppBarState
+import com.cacagdas.composetodoapp.util.TrailingIconState
 
 @Composable
-fun ListAppBar() {
-    /*DefaultListAppBar(
-        onSearchClicked = {},
-        onSortClicked = {},
-        onDeleteClicked = {}
-    )*/
-    SearchAppBar(
-        text = "",
-        onTextChange = {},
-        onCloseClicked = {},
-        onSearchClicked = {}
-    )
+fun ListAppBar(
+    sharedViewModel: SharedViewModel,
+    searchAppBarState: SearchAppBarState,
+    searchTextState: String,
+) {
+    when (searchAppBarState) {
+        SearchAppBarState.CLOSED -> {
+            DefaultListAppBar(
+                onSearchClicked = {
+                    sharedViewModel.searchAppBarState.value = SearchAppBarState.OPENED
+                },
+                onSortClicked = {},
+                onDeleteClicked = {},
+            )
+        }
+
+        else -> {
+            SearchAppBar(
+                text = searchTextState,
+                onTextChange = {
+                    sharedViewModel.searchTextState.value = it
+                },
+                onCloseClicked = {
+                    sharedViewModel.searchAppBarState.value = SearchAppBarState.CLOSED
+                    sharedViewModel.searchTextState.value = ""
+                },
+                onSearchClicked = {},
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,16 +95,17 @@ fun DefaultListAppBar(
             ListAppBarActions(
                 onSearchClicked,
                 onSortClicked,
-                onDeleteClicked
+                onDeleteClicked,
             )
         },
-        colors = TopAppBarDefaults.smallTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.topAppBarBackgroundColor,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-            actionIconContentColor = MaterialTheme.colorScheme.onSecondary,
-            scrolledContainerColor = MaterialTheme.colorScheme.onPrimary,
-        ),
+        colors =
+            TopAppBarDefaults.smallTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.topAppBarBackgroundColor,
+                titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+                actionIconContentColor = MaterialTheme.colorScheme.onSecondary,
+                scrolledContainerColor = MaterialTheme.colorScheme.onPrimary,
+            ),
     )
 }
 
@@ -99,9 +121,7 @@ fun ListAppBarActions(
 }
 
 @Composable
-fun SearchAction(
-    onSearchClicked: () -> Unit,
-) {
+fun SearchAction(onSearchClicked: () -> Unit) {
     IconButton(onClick = { onSearchClicked() }) {
         Icon(
             imageVector = Icons.Filled.Search,
@@ -112,9 +132,7 @@ fun SearchAction(
 }
 
 @Composable
-fun SortAction(
-    onSortClicked: (Priority) -> Unit,
-) {
+fun SortAction(onSortClicked: (Priority) -> Unit) {
     var expanded by remember {
         mutableStateOf(false)
     }
@@ -174,9 +192,7 @@ fun SortAction(
 }
 
 @Composable
-fun DeleteAllAction(
-    onDeleteClicked: () -> Unit,
-) {
+fun DeleteAllAction(onDeleteClicked: () -> Unit) {
     var expanded by remember {
         mutableStateOf(false)
     }
@@ -200,7 +216,7 @@ fun DeleteAllAction(
                     Text(
                         text = stringResource(R.string.delete_all_action),
                         style = Typography.bodyMedium,
-                        modifier = Modifier.padding(start = PADDING_12)
+                        modifier = Modifier.padding(start = PADDING_12),
                     )
                 },
                 onClick = {
@@ -218,14 +234,19 @@ fun SearchAppBar(
     text: String,
     onTextChange: (String) -> Unit,
     onCloseClicked: () -> Unit,
-    onSearchClicked: (String) -> Unit
+    onSearchClicked: (String) -> Unit,
 ) {
+    var trailingIconState by remember {
+        mutableStateOf(TrailingIconState.READY_TO_DELETE)
+    }
+
     Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(TOP_APP_BAR_SIZE),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(TOP_APP_BAR_SIZE),
         shadowElevation = TOP_APP_BAR_ELEVATION,
-        color = MaterialTheme.colorScheme.topAppBarBackgroundColor // TODO fix color
+        color = MaterialTheme.colorScheme.topAppBarBackgroundColor, // TODO fix color
     ) {
         TextField(
             modifier = Modifier.fillMaxWidth(),
@@ -237,52 +258,70 @@ fun SearchAppBar(
                 Text(
                     modifier = Modifier.alpha(DefaultAlpha),
                     text = "Search",
-                    color = Color.White
+                    color = Color.White,
                 )
             },
-            textStyle = TextStyle(
-                color = MaterialTheme.colorScheme.topAppBarContentColor,
-                fontSize = MaterialTheme.typography.bodyMedium.fontSize
-            ),
+            textStyle =
+                TextStyle(
+                    color = MaterialTheme.colorScheme.topAppBarContentColor,
+                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                ),
             singleLine = true,
             leadingIcon = {
                 IconButton(
                     modifier = Modifier.alpha(DefaultAlpha),
-                    onClick = {}
+                    onClick = {},
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Search,
                         contentDescription = "Search Icon",
-                        tint = MaterialTheme.colorScheme.topAppBarContentColor
+                        tint = MaterialTheme.colorScheme.topAppBarContentColor,
                     )
                 }
             },
             trailingIcon = {
                 IconButton(onClick = {
-                    onCloseClicked()
+                    when (trailingIconState) {
+                        TrailingIconState.READY_TO_DELETE -> {
+                            onTextChange("")
+                            trailingIconState = TrailingIconState.READY_TO_CLOSE
+                        }
+
+                        TrailingIconState.READY_TO_CLOSE -> {
+                            if (text.isNotEmpty()) {
+                                onTextChange("")
+                            } else {
+                                onCloseClicked()
+                                trailingIconState = TrailingIconState.READY_TO_DELETE
+                            }
+                        }
+                    }
                 }) {
                     Icon(
                         imageVector = Icons.Filled.Close,
                         contentDescription = "Close Icon",
-                        tint = MaterialTheme.colorScheme.topAppBarContentColor
+                        tint = MaterialTheme.colorScheme.topAppBarContentColor,
                     )
                 }
             },
-            keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Search
-            ),
-            keyboardActions = KeyboardActions(
-                onSearch = {
-                    onSearchClicked(text)
-                }
-            ),
-            colors = TextFieldDefaults.textFieldColors(
-                cursorColor = MaterialTheme.colorScheme.topAppBarContentColor,
-                focusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                containerColor = Color.Transparent,
-            )
+            keyboardOptions =
+                KeyboardOptions(
+                    imeAction = ImeAction.Search,
+                ),
+            keyboardActions =
+                KeyboardActions(
+                    onSearch = {
+                        onSearchClicked(text)
+                    },
+                ),
+            colors =
+                TextFieldDefaults.textFieldColors(
+                    cursorColor = MaterialTheme.colorScheme.topAppBarContentColor,
+                    focusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    containerColor = Color.Transparent,
+                ),
         )
     }
 }
@@ -293,7 +332,7 @@ private fun DefaultListAppBarPreview() {
     DefaultListAppBar(
         onSearchClicked = {},
         onSortClicked = {},
-        onDeleteClicked = {}
+        onDeleteClicked = {},
     )
 }
 
@@ -304,6 +343,6 @@ private fun SearchAppBarPreview() {
         text = "",
         onTextChange = {},
         onCloseClicked = {},
-        onSearchClicked = {}
+        onSearchClicked = {},
     )
 }
