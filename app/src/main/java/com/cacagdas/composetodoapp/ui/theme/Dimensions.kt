@@ -14,3 +14,5 @@ val SIZE_8 = 8.dp
 
 val TOP_APP_BAR_SIZE = 64.dp
 val TOP_APP_BAR_ELEVATION = 4.dp
+
+val TASK_ITEM_ELEVATION = 2.dp
