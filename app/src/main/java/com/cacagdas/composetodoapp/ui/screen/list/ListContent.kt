@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -28,7 +30,20 @@ import com.cacagdas.composetodoapp.ui.theme.taskItemBackgroundColor
 import com.cacagdas.composetodoapp.ui.theme.taskItemTextColor
 
 @Composable
-fun ListContent() {
+fun ListContent(
+    tasks: List<ToDoTask>,
+    navigateToTaskScreen: (taskIs: Int) -> Unit,
+) {
+    LazyColumn {
+        items(
+            items = tasks,
+            key = { task ->
+                task.id
+            },
+        ) {
+            TaskItem(toDoTask = it, navigateToTaskScreen = navigateToTaskScreen)
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,7 +77,10 @@ fun TaskItem(
                     maxLines = 1,
                 )
                 Box(
-                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
                     contentAlignment = Alignment.TopEnd,
                 ) {
                     Canvas(
