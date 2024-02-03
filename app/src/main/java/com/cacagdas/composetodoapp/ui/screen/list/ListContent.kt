@@ -27,16 +27,19 @@ import com.cacagdas.composetodoapp.ui.theme.SIZE_16
 import com.cacagdas.composetodoapp.ui.theme.TASK_ITEM_ELEVATION
 import com.cacagdas.composetodoapp.ui.theme.taskItemBackgroundColor
 import com.cacagdas.composetodoapp.ui.theme.taskItemTextColor
+import com.cacagdas.composetodoapp.util.RequestState
 
 @Composable
 fun ListContent(
-    tasks: List<ToDoTask>,
+    tasks: RequestState<List<ToDoTask>>,
     navigateToTaskScreen: (taskIs: Int) -> Unit,
 ) {
-    if (tasks.isEmpty()) {
-        EmptyContent()
-    } else {
-        DisplayTasks(tasks, navigateToTaskScreen)
+    if (tasks is RequestState.Success) {
+        if (tasks.data.isEmpty()) {
+            EmptyContent()
+        } else {
+            DisplayTasks(tasks.data, navigateToTaskScreen)
+        }
     }
 }
 
