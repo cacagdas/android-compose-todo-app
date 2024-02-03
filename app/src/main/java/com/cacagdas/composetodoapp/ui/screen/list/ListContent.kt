@@ -5,9 +5,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,16 +20,28 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.cacagdas.composetodoapp.data.model.Priority
 import com.cacagdas.composetodoapp.data.model.ToDoTask
 import com.cacagdas.composetodoapp.ui.theme.PADDING_12
+import com.cacagdas.composetodoapp.ui.theme.SIZE_16
 import com.cacagdas.composetodoapp.ui.theme.TASK_ITEM_ELEVATION
 import com.cacagdas.composetodoapp.ui.theme.taskItemBackgroundColor
 import com.cacagdas.composetodoapp.ui.theme.taskItemTextColor
 
 @Composable
 fun ListContent(
+    tasks: List<ToDoTask>,
+    navigateToTaskScreen: (taskIs: Int) -> Unit,
+) {
+    if (tasks.isEmpty()) {
+        EmptyContent()
+    } else {
+        DisplayTasks(tasks, navigateToTaskScreen)
+    }
+}
+
+@Composable
+fun DisplayTasks(
     tasks: List<ToDoTask>,
     navigateToTaskScreen: (taskIs: Int) -> Unit,
 ) {
@@ -84,9 +95,7 @@ fun TaskItem(
                     contentAlignment = Alignment.TopEnd,
                 ) {
                     Canvas(
-                        Modifier
-                            .width(16.dp)
-                            .height(16.dp),
+                        Modifier.size(SIZE_16),
                     ) {
                         drawCircle(
                             color = toDoTask.priority.color,
