@@ -27,6 +27,9 @@ class SharedViewModel
         private val _allTasks = MutableStateFlow<RequestState<List<ToDoTask>>>(RequestState.Idle)
         val allTasks: StateFlow<RequestState<List<ToDoTask>>> = _allTasks
 
+        private val _selectedTask: MutableStateFlow<ToDoTask?> = MutableStateFlow(null)
+        val selectedTask: StateFlow<ToDoTask?> = _selectedTask
+
         fun getAllTasks() {
             _allTasks.value = RequestState.Loading
             try {
@@ -37,6 +40,14 @@ class SharedViewModel
                 }
             } catch (e: Exception) {
                 _allTasks.value = RequestState.Error(e)
+            }
+        }
+
+        fun getSelectedTask(taskId: Int) {
+            viewModelScope.launch {
+                repository.getSelectedTask(taskId).collect {
+                    _selectedTask.value = it
+                }
             }
         }
     }

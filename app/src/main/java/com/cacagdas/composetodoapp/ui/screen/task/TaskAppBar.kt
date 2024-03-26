@@ -24,9 +24,18 @@ import com.cacagdas.composetodoapp.ui.theme.topAppBarContentColor
 import com.cacagdas.composetodoapp.util.Action
 
 @Composable
-fun TaskAppBar(navigateToListScreen: (Action) -> Unit) {
-    NewTaskAppBar {
-        navigateToListScreen.invoke(it)
+fun TaskAppBar(
+    selectedTask: ToDoTask?,
+    navigateToListScreen: (Action) -> Unit,
+) {
+    selectedTask?.let {
+        ExistingTaskAppBar(it) {
+            navigateToListScreen.invoke(it)
+        }
+    } ?: run {
+        NewTaskAppBar {
+            navigateToListScreen.invoke(it)
+        }
     }
 }
 

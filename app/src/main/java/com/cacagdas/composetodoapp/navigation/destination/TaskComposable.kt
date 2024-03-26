@@ -1,15 +1,21 @@
 package com.cacagdas.composetodoapp.navigation.destination
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.cacagdas.composetodoapp.ui.SharedViewModel
 import com.cacagdas.composetodoapp.ui.screen.task.TaskScreen
 import com.cacagdas.composetodoapp.util.Action
 import com.cacagdas.composetodoapp.util.Constants.TASK_ARG_KEY
 import com.cacagdas.composetodoapp.util.Constants.TASK_SCREEN
 
-fun NavGraphBuilder.taskComposable(navigateToListScreen: (Action) -> Unit) {
+fun NavGraphBuilder.taskComposable(
+    sharedViewModel: SharedViewModel,
+    navigateToListScreen: (Action) -> Unit,
+) {
     composable(
         route = TASK_SCREEN,
         arguments =
@@ -20,8 +26,10 @@ fun NavGraphBuilder.taskComposable(navigateToListScreen: (Action) -> Unit) {
             ),
     ) {
         val taskId = it.arguments?.getInt(TASK_ARG_KEY)
-        TaskScreen {
-            navigateToListScreen.invoke(it)
+        taskId?.let { id -> sharedViewModel.getSelectedTask(id) }
+        val selectedTask by sharedViewModel.selectedTask.collectAsState()
+        TaskScreen(selectedTask) { action ->
+            navigateToListScreen.invoke(action)
         }
     }
 }
