@@ -16,4 +16,6 @@
     <string name="delete">Delete</string>
     <string name="update">Update</string>
     <string name="drop_down_arrow_icon_content_desc">Drop down arrow icon</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
 </resources>

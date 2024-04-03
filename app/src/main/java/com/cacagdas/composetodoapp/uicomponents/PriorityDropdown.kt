@@ -2,6 +2,7 @@ package com.cacagdas.composetodoapp.uicomponents
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -47,11 +48,13 @@ fun PriorityDropdown(
         modifier =
             Modifier
                 .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
                 .height(56.dp)
                 .clickable { expanded = true }
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = DefaultAlpha),
+                    shape = MaterialTheme.shapes.extraSmall,
                 ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -64,7 +67,7 @@ fun PriorityDropdown(
             drawCircle(color = priority.color)
         }
         Text(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(8f),
             text = priority.name,
             style = MaterialTheme.typography.bodyMedium,
         )
@@ -82,7 +85,9 @@ fun PriorityDropdown(
             )
         }
         DropdownMenu(
-            modifier = Modifier.fillMaxWidth(),
+            modifier =
+                Modifier.fillMaxWidth(fraction = 0.92f)
+                    .background(MaterialTheme.colorScheme.background),
             expanded = expanded,
             onDismissRequest = { expanded = false },
         ) {
